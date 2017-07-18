@@ -27,6 +27,23 @@
  */
 class Session
 {
+    
+    /**
+     * To init PHP session.
+     *
+     * @param array $args for init php session
+     * @return bool|string session id.
+     */
+    public static function init($args = [])
+    {
+        // Check session id is inititated or not.
+        if (!session_id()) {
+            // If session is not initiated, then init.
+            session_start($args);
+        }
+        return session_id();
+    }
+    
     /**
      * Adding new item or replace item to the session;
      *
