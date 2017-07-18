@@ -19,7 +19,6 @@
  *
  */
 
-
 <?php
 
 /**
@@ -127,7 +126,7 @@ class Session
      * @param $value string, content to filter.
      * @param string $type , filtered content.
      */
-    public static function sanityFilter(&$value, $type = 'string')
+    protected static function sanityFilter(&$value, $type = 'string')
     {
         switch ($type) {
             case 'string':
