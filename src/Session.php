@@ -92,7 +92,7 @@ class Session
         // Sanity check.
         if (!$key) return false;
         // Filter the string "$key"
-        after_listen_form_helper::sanityFilter($key);
+        self::sanityFilter($key);
         // Check whether the item is exist or not.
         if (isset($_SESSION[$key])) {
             // Remove item from session.
