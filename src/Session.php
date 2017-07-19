@@ -46,15 +46,20 @@ class Session
      * To init PHP session.
      *
      * @param array $args for init php session
+     * ex. $args = [
+     *          'cookie_lifetime' => 43200, // 12 hours
+     *          'read_and_close'  => true
+     *             ]
      * @return bool|string session id.
      */
     public static function init($args = [])
     {
-        // Check session id is inititated or not.
+        // Check session id is init or not.
         if (!session_id()) {
             // If session is not initiated, then init.
-            session_start($args);
+            session_start([$args]);
         }
+
         return session_id();
     }
 
@@ -119,7 +124,7 @@ class Session
     {
         // Formatting the time with integer.
         $time = intval($time);
-        // Sanityize check.
+        // Sanitize check.
         if (false === $time) return false;
         // Default session expiry index.
         $key = 'session_expiry_duration';
