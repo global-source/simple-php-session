@@ -1,23 +1,23 @@
 /*!
- * Simple Php Session
- * Simple Instance for access PHP's Session.
- *
- * Author : Shankar Thiyagaraajan
- * Email  : shankarthiyagaraajan@gmail.com
- * Github : https://github.com/shankarThiyagaraajan
- *
- * Source
- * https://github.com/global-source/simple-php-session
- *
- * Site
- * https://global-source.github.io/simple-php-session/
- *
- * Copyright 2017
- *
- * Released under the MIT license
- * https://github.com/global-source/simple-php-session/blob/master/LICENSE
- *
- */
+* Simple Php Session
+* Simple Instance for access PHP's Session.
+*
+* Author : Shankar Thiyagaraajan
+* Email  : shankarthiyagaraajan@gmail.com
+* Github : https://github.com/shankarThiyagaraajan
+*
+* Source
+* https://github.com/global-source/simple-php-session
+*
+* Site
+* https://global-source.github.io/simple-php-session/
+*
+* Copyright 2017
+*
+* Released under the MIT license
+* https://github.com/global-source/simple-php-session/blob/master/LICENSE
+*
+*/
 
 <?php
 
@@ -26,7 +26,7 @@
  */
 class Session
 {
-    
+
     /**
      * To init PHP session's time to live.
      *
@@ -34,14 +34,14 @@ class Session
      */
     public static function initExpiry($time = 600)
     {
-      // Convert with integer.
-      $time = intval($time);
-      // If not a valid data, then use default value.
-      if(!$time) $time = 600;
-      // Update custom PHP INI param.
-      ini_set('session.gc-maxlifetime', $time);       
+        // Convert with integer.
+        $time = intval($time);
+        // If not a valid data, then use default value.
+        if (!$time) $time = 600;
+        // Update custom PHP INI param.
+        ini_set('session.gc-maxlifetime', $time);
     }
-    
+
     /**
      * To init PHP session.
      *
@@ -57,15 +57,16 @@ class Session
         }
         return session_id();
     }
-    
+
     /**
      * Adding new item or replace item to the session;
      *
      * @param $key string, key of the session.
      * @param $value string|array, value of the session item.
+     * @param $withExpiry bool, To enable auto expiry or not.
      * @return bool true|false
      */
-    public static function set($key, $value, $withTime = 0)
+    public static function set($key, $value, $withExpiry = false)
     {
         // Sanity check.
         if (false === $key || is_null($key)) return false;
@@ -80,24 +81,77 @@ class Session
 
         // Store the value to the session.
         $_SESSION[$key] = $value;
+        // set auto expiry time to item.
+        if (true === $withExpiry) self::setTimeToExpiry($key);
+        // Status.
         return true;
     }
-    
+
     /**
      * To set item with remove auto expiry.
      *
      * @param $key string, key of the session.
-     * @param int $time time to live in session.
+     * @param int|bool $time time to live in session.
+     * @return bool
      */
     public static function setTimeToExpiry($key, $time = false)
     {
+        // Formatting the time with integer.    
         $time = intval($time);
-        if(false === $key || false === $time || is_null($key)) return false;
-        $key = $key.'_CREATED';
+        // Sanitize check.
+        if (false === $key || false === $time || is_null($key)) return false;
+        $ttlItems = self::get('__ttlItems', []);
+        // Current time.
         $value = time();
-        self::set($key,$value);
+        // Update to the session.
+        $ttlItems[$key] = $value;
+        // Default index to maintain the created time.
+        self::set('__ttlItems', $ttlItems);
     }
-       
+
+    /**
+     * To set item with remove auto expiry.
+     *
+     * @param int|bool $time time to live in session.
+     * @return bool
+     */
+    public static function setDefaultTimeToExpiry($time = false)
+    {
+        // Formatting the time with integer.
+        $time = intval($time);
+        // Sanityize check.
+        if (false === $time) return false;
+        // Default session expiry index.
+        $key = 'session_expiry_duration';
+        // Set value to expiry.
+        $value = $time;
+        // Set time expiry to session.
+        self::set($key, $value);
+    }
+
+    /**
+     * To check and remove item, if time expired.
+     */
+    public static function checkExpiry()
+    {
+        // Check the time expiry index is set or not.
+        if (false !== ($exp_time = self::get('session_expiry_duration', false))) {
+            // Get ttl items from session.
+            $items = self::get('__ttlItems', false);
+            // Sanity check.
+            if (false !== $items) {
+                // Looping the items to get update the session.
+                foreach ($items as $index => $item_time) {
+                    // If time is expired, then it will remove automatically.
+                    if ((time() - $item_time) > $exp_time) {
+                        // trigger remove index.
+                        self::remove($index);
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * To get the value from the session.
      *
