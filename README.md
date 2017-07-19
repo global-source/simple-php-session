@@ -29,4 +29,4 @@ To remove an item from the session with the "$key".
 
 # Lisence
 ___
-## MIT
+### [MIT](https://github.com/global-source/simple-php-session/blob/master/LICENSE)
