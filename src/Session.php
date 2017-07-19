@@ -65,7 +65,7 @@ class Session
      * @param $value string|array, value of the session item.
      * @return bool true|false
      */
-    public static function set($key, $value)
+    public static function set($key, $value, $withTime = 0)
     {
         // Sanity check.
         if (false === $key || is_null($key)) return false;
@@ -82,7 +82,22 @@ class Session
         $_SESSION[$key] = $value;
         return true;
     }
-
+    
+    /**
+     * To set item with remove auto expiry.
+     *
+     * @param $key string, key of the session.
+     * @param int $time time to live in session.
+     */
+    public static function setTimeToExpiry($key, $time = false)
+    {
+        $time = intval($time);
+        if(false === $key || false === $time || is_null($key)) return false;
+        $key = $key.'_CREATED';
+        $value = time();
+        self::set($key,$value);
+    }
+       
     /**
      * To get the value from the session.
      *
