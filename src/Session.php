@@ -28,6 +28,21 @@ class Session
 {
     
     /**
+     * To init PHP session's time to live.
+     *
+     * @param int $time duration to expiry session.
+     */
+    public static function initExpiry($time = 600)
+    {
+      // Convert with integer.
+      $time = intval($time);
+      // If not a valid data, then use default value.
+      if(!$time) $time = 600;
+      // Update custom PHP INI param.
+      ini_set('session.gc-maxlifetime', $time);       
+    }
+    
+    /**
      * To init PHP session.
      *
      * @param array $args for init php session
