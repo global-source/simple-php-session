@@ -1,32 +1,32 @@
-/*!
-* Simple Php Session
-* Simple Instance for access PHP's Session.
-*
-* Author : Shankar Thiyagaraajan
-* Email  : shankarthiyagaraajan@gmail.com
-* Github : https://github.com/shankarThiyagaraajan
-*
-* Source
-* https://github.com/global-source/simple-php-session
-*
-* Site
-* https://global-source.github.io/simple-php-session/
-*
-* Copyright 2017
-*
-* Released under the MIT license
-* https://github.com/global-source/simple-php-session/blob/master/LICENSE
-*
-*/
-
 <?php
+
+/**
+ * Simple Php Session
+ * Simple Instance for access PHP's Session.
+ *
+ * Author : Shankar Thiyagaraajan
+ * Email  : shankarthiyagaraajan@gmail.com
+ * Github : https://github.com/shankarThiyagaraajan
+ *
+ * Source
+ * https://github.com/global-source/simple-php-session
+ *
+ * Site
+ * https://global-source.github.io/simple-php-session/
+ *
+ * Copyright 2017
+ *
+ * Released under the MIT license
+ * https://github.com/global-source/simple-php-session/blob/master/LICENSE
+ *
+ */
+
 
 /**
  * For complete session management class.
  */
 class Session
 {
-
     /**
      * To init PHP session's time to live.
      *
@@ -41,7 +41,6 @@ class Session
         // Update custom PHP INI param.
         ini_set('session.gc-maxlifetime', $time);
     }
-
     /**
      * To init PHP session.
      *
@@ -57,12 +56,10 @@ class Session
         // Check session id is init or not.
         if (!session_id()) {
             // If session is not initiated, then init.
-            session_start([$args]);
+            session_start();
         }
-
         return session_id();
     }
-
     /**
      * Adding new item or replace item to the session;
      *
@@ -73,6 +70,8 @@ class Session
      */
     public static function set($key, $value, $withExpiry = false)
     {
+        // Check and init.
+        self::init();
         // Sanity check.
         if (false === $key || is_null($key)) return false;
         if (false === $value || is_null($value)) return false;
@@ -83,7 +82,6 @@ class Session
         // Sanitizing the string.
         self::sanityFilter($key);
         self::sanityFilter($value);
-
         // Store the value to the session.
         $_SESSION[$key] = $value;
         // set auto expiry time to item.
@@ -91,7 +89,6 @@ class Session
         // Status.
         return true;
     }
-
     /**
      * To set item with remove auto expiry.
      *
@@ -101,6 +98,8 @@ class Session
      */
     public static function setTimeToExpiry($key, $time = false)
     {
+        // Check and init.
+        self::init();
         // Formatting the time with integer.    
         $time = intval($time);
         // Sanitize check.
@@ -113,7 +112,6 @@ class Session
         // Default index to maintain the created time.
         self::set('__ttlItems', $ttlItems);
     }
-
     /**
      * To set item with remove auto expiry.
      *
@@ -122,6 +120,8 @@ class Session
      */
     public static function setDefaultTimeToExpiry($time = false)
     {
+        // Check and init.
+        self::init();
         // Formatting the time with integer.
         $time = intval($time);
         // Sanitize check.
@@ -133,12 +133,13 @@ class Session
         // Set time expiry to session.
         self::set($key, $value);
     }
-
     /**
      * To check and remove item, if time expired.
      */
     public static function checkExpiry()
     {
+        // Check and init.
+        self::init();
         // Check the time expiry index is set or not.
         if (false !== ($exp_time = self::get('session_expiry_duration', false))) {
             // Get ttl items from session.
@@ -156,7 +157,6 @@ class Session
             }
         }
     }
-
     /**
      * To get the value from the session.
      *
@@ -166,6 +166,8 @@ class Session
      */
     public static function get($key, $default = false)
     {
+        // Check and init.
+        self::init();
         // Sanity check.
         if (false === $key || is_null($key)) return $default;
         // String conversion.
@@ -181,7 +183,6 @@ class Session
         // Response from session.
         return $response;
     }
-
     /**
      * To remove item from session.
      *
@@ -190,6 +191,8 @@ class Session
      */
     public static function remove($key)
     {
+        // Check and init.
+        self::init();
         // Sanity check
         if (false === $key || is_null($key)) return false;
         // String conversion.
@@ -208,7 +211,6 @@ class Session
         // Failed on remove.
         return false;
     }
-
     /**
      * To filter the content with it's specific type.
      *
@@ -229,5 +231,4 @@ class Session
                 break;
         }
     }
-
 }
