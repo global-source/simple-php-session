@@ -91,7 +91,7 @@ class Session
     }
     /**
      * To set item with remove auto expiry.
-     *
+     * [Under Testing]
      * @param $key string, key of the session.
      * @param int|bool $time time to live in session.
      * @return bool
@@ -114,7 +114,7 @@ class Session
     }
     /**
      * To set item with remove auto expiry.
-     *
+     * [Under Testing]
      * @param int|bool $time time to live in session.
      * @return bool
      */
@@ -135,6 +135,7 @@ class Session
     }
     /**
      * To check and remove item, if time expired.
+     * [Under Testing]
      */
     public static function checkExpiry()
     {
